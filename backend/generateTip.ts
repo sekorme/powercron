@@ -1,9 +1,9 @@
 // backend/generateTip.ts
 import admin from "firebase-admin";
-import { GoogleAI } from "google-genai";
+import { GoogleGenAI } from "@google/genai";
 
 if (!admin.apps.length) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+     // eslint-disable-next-line @typescript-eslint/no-var-requir
     const serviceAccount = require("@/service_key.json"); // adjust path
 
     admin.initializeApp({
@@ -14,7 +14,7 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 // ✅ Gemini setup with google-genai
-const client = new GoogleAI({
+const client = new GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY!,
 });
 
@@ -25,13 +25,11 @@ export async function generateDailyTip() {
         "Give me a short, motivational health tip for the day. Make it unique and practical.";
 
     const response = await client.models.generateContent({
-        model: "gemini-2.0-flash", // use 2.0 or latest supported model
-        input: prompt,
+        model: "gemini-2.5-flash", // use 2.0 or latest supported model
+        contents: prompt,
     });
 
-    const tip =
-        response.output_text?.trim() ??
-        "No tip generated.";
+    const tip = response.choices?.[0]?.message?.contents?.trim() ?? "No tip generated.";
 
     // ✅ Works with locked Firestore rules
     await db.collection("dailyTips").doc(today).set({
