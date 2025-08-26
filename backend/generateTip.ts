@@ -1,11 +1,10 @@
 // backend/generateTip.ts
 import admin from "firebase-admin";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import serviceAccount from "../service_key.json";
 
 if (!admin.apps.length) {
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-    const serviceAccount = require("../service_key.json"); // ← adjust path
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const serviceAccount = require("@/service_key.json"); // ← adjust path
 
     admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
 }
