@@ -1,43 +1,31 @@
 // backend/generateTip.ts
-import { initializeApp } from "firebase/app";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
+import admin from "firebase-admin";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// Firebase config
-const firebaseConfig = {
-    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
-    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
-    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
-    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
-    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSASING_SENDER_ID!,
-    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
-};
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// Gemini client
-const geminiApiKey = process.env.GEMINI_API_KEY!;
-if (!geminiApiKey) {
-    throw new Error(
-        "Missing GEMINI_API_KEY environment variable. Set.. it in your environment (.env.local or Vercel project settings)."
-    );
+if (!admin.apps.length) {
+    admin.initializeApp({
+        credential: admin.credential.cert(
+            JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY as string)
+        ),
+    });
 }
-const genAI = new GoogleGenerativeAI(geminiApiKey);
 
-// Function to generate tip
+const db = admin.firestore();
+
+// Gemini setup...
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+
 export async function generateDailyTip() {
-    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+    const today = new Date().toISOString().split("T")[0];
 
-    const prompt = `Give me a short,.. motivational health tip for the day. Make it unique and practical.`;
-
-    // Use Gemini model
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const prompt = `Give me a short, motivational health tip for the day. Make it unique and practical.`;
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     const result = await model.generateContent(prompt);
 
     const tip = result.response?.text().trim() ?? "No tip generated.";
 
-    // Store in Firestore
-    await setDoc(doc(db, "dailyTips", today), {
+    // ✅ This works even with locked Firestore rules
+    await db.collection("dailyTips").doc(today).set({
         date: today,
         tip,
         createdAt: new Date().toISOString(),
