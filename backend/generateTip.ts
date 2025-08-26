@@ -9,14 +9,14 @@ const firebaseConfig = {
     authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
     projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
     storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
-    messagingSenderId: process.env.NEXT_PUBLI_FIREBASEC_MESSASING_SENDER_ID!,
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSASING_SENDER_ID!,
     appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // OpenAI client
-const openaiApiKey = process.env.OPENAI_API_KEY!;
+const openaiApiKey = process.env.OPEN_API_KEY!;
 if (!openaiApiKey) {
     throw new Error("Missing OPENAI_API_KEY environment variable. Set it in your environment (e.g., .env.local or Vercel project settings).");
 }
