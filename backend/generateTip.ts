@@ -1,7 +1,7 @@
 // backend/generateTip.ts
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
-import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Firebase config
 const firebaseConfig = {
@@ -15,14 +15,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// OpenAI client
-const openaiApiKey = process.env.OPEN_API_KEY!;
-if (!openaiApiKey) {
-    throw new Error("Missing OPENAI_API_KEY environment variable. Set it in your environment (e.g., ...env.local or Vercel project settings).");
+// Gemini client
+const geminiApiKey = process.env.GEMINI_API_KEY!;
+if (!geminiApiKey) {
+    throw new Error(
+        "Missing GEMINI_API_KEY environment variable. Set it in your environment (.env.local or Vercel project settings)."
+    );
 }
-const client = new OpenAI({
-    apiKey: openaiApiKey,
-});
+const genAI = new GoogleGenerativeAI(geminiApiKey);
 
 // Function to generate tip
 export async function generateDailyTip() {
@@ -30,13 +30,11 @@ export async function generateDailyTip() {
 
     const prompt = `Give me a short, motivational health tip for the day. Make it unique and practical.`;
 
-    const response = await client.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [{ role: "user", content: prompt }],
-        max_tokens: 50,
-    });
+    // Use Gemini model
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const result = await model.generateContent(prompt);
 
-    const tip = response.choices?.[0]?.message?.content?.trim() ?? "No tip generated.";
+    const tip = result.response?.text().trim() ?? "No tip generated.";
 
     // Store in Firestore
     await setDoc(doc(db, "dailyTips", today), {
