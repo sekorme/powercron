@@ -2,14 +2,7 @@
 import admin from "firebase-admin";
 import { GoogleGenAI } from "@google/genai";
 
-if (!admin.apps.length) {
-     // eslint-disable-next-line @typescript-eslint/no-var-requir
-    const serviceAccount = require("@/service_key.json"); // adjust path
 
-    admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-    });
-}
 
 const db = admin.firestore();
 
