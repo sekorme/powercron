@@ -19,7 +19,7 @@ const db = getFirestore(app);
 const geminiApiKey = process.env.GEMINI_API_KEY!;
 if (!geminiApiKey) {
     throw new Error(
-        "Missing GEMINI_API_KEY environment variable. Set it in your environment (.env.local or Vercel project settings)."
+        "Missing GEMINI_API_KEY environment variable. Set.. it in your environment (.env.local or Vercel project settings)."
     );
 }
 const genAI = new GoogleGenerativeAI(geminiApiKey);
@@ -28,7 +28,7 @@ const genAI = new GoogleGenerativeAI(geminiApiKey);
 export async function generateDailyTip() {
     const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
-    const prompt = `Give me a short, motivational health tip for the day. Make it unique and practical.`;
+    const prompt = `Give me a short,.. motivational health tip for the day. Make it unique and practical.`;
 
     // Use Gemini model
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
