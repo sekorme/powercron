@@ -18,7 +18,7 @@ const db = getFirestore(app);
 // OpenAI client
 const openaiApiKey = process.env.OPEN_API_KEY!;
 if (!openaiApiKey) {
-    throw new Error("Missing OPENAI_API_KEY environment variable. Set it in your environment (e.g., .env.local or Vercel project settings).");
+    throw new Error("Missing OPENAI_API_KEY environment variable. Set it in your environment (e.g., ...env.local or Vercel project settings).");
 }
 const client = new OpenAI({
     apiKey: openaiApiKey,
