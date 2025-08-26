@@ -1,13 +1,13 @@
 // backend/generateTip.ts
 import admin from "firebase-admin";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import serviceAccount from "../service_key.json";
 
 if (!admin.apps.length) {
-    admin.initializeApp({
-        credential: admin.credential.cert(
-            JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY as string)
-        ),
-    });
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+    const serviceAccount = require("../service_key.json"); // ← adjust path
+
+    admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
 }
 
 const db = admin.firestore();
